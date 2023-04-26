@@ -169,18 +169,33 @@ void create_file(char *str, char *str_2)
 
 int main(int ac, char **av)
 {
-    if (ac != 2)
-        return (84);
+    if (ac != 2) return (84);
     FILE *file = fopen(av[1], "rb");
     char octet;
-    if (file == NULL)
-    {
+    if (file == NULL) {
         perror("Erreur lors de l'ouverture du file");
         exit(EXIT_FAILURE);
     }
-    while (fread(&octet, sizeof(char), 1, file))
-    {
-        printf("0x%02X ", octet & 0x000000ff);
+    while (fread(&octet, sizeof(char), 1, file)) {
+        //printf("0x%02X \n", octet & 0x000000ff);
+        if ((octet & 0x000000ff) == 01) {
+            printf("its add\n");
+            for (int i = 0; i <= 4; i++)
+                fread(&octet, sizeof(char), 1, file);
+        }
+        if ((octet & 0x000000ff) == 02) {
+            printf("its sub\n");
+            for(int i = 0; i <= 4; i++)
+                fread(&octet, sizeof(char), 1, file);
+        }
+        if ((octet & 0x000000ff) == 03) {
+            printf("its mul\n");
+            for (int i = 0; i <= 4; i++)
+                fread(&octet, sizeof(char), 1, file);
+        }
+        if ((octet & 0x000000ff) == 04) {
+            printf("its put\n");
+        }
     }
     fclose(file);
     return 0;
