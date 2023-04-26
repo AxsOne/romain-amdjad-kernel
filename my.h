@@ -7,6 +7,8 @@
 #pragma once
 #include <stdlib.h>
 
+#define IS_DIGIT(x) ((x) >= '0' && x <= '9')
+
 typedef struct save_byte_s {
     int byte;
     char c;

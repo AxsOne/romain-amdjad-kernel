@@ -83,7 +83,7 @@ void step5(void)
     fclose(fp);
 }
 
-int adds(int a, int b)
+int adds(int a, int b) 
 {
     return a + b;
 }
@@ -167,12 +167,32 @@ void create_file(char *str, char *str_2)
 //     return 0;
 // }
 
+int bytes_to_dec(char byte1, char byte2, char byte3, char byte4)
+{
+    //conversion en valeur ascii
+    int dec1 = (unsigned char)byte1;
+    int dec2 = (unsigned char)byte2;
+    int dec3 = (unsigned char)byte3;
+    int dec4 = (unsigned char)byte4;
+    printf("%d %d %d %d", dec1, dec2, dec3, dec4);
+    exit(67);
+    //inversion du small endian pour retourner l'int
+    return (dec1 << 24) | (dec2 << 16) | (dec3 << 8) | dec4;
+}
+
 int main(int ac, char **av)
 {
     if (ac != 2) return (84);
     FILE *file = fopen(av[1], "rb");
     char octet;
-    if (file == NULL) {
+    char tmp;
+    char tmp1;
+    char tmp2;
+    char tmp3;
+    int a;
+    int b;
+    if (file == NULL)
+    {
         perror("Erreur lors de l'ouverture du file");
         exit(EXIT_FAILURE);
     }
@@ -180,16 +200,34 @@ int main(int ac, char **av)
         //printf("0x%02X \n", octet & 0x000000ff);
         if ((octet & 0x000000ff) == 01) {
             printf("its add\n");
-            for (int i = 0; i < 8; i++) {
-                fread(&octet, sizeof(char), 1, file);
-                printf("0x%02X \n", octet & 0x000000ff);
-            }
+            //for (int i = 0; i < 8; i++) {
+            fread(&tmp, sizeof(char), 1, file);
+            fread(&tmp1, sizeof(char), 1, file);
+            fread(&tmp2, sizeof(char), 1, file);
+            fread(&tmp3, sizeof(char), 1, file);
+            a = bytes_to_dec(tmp3, tmp2, tmp1, tmp);
+            fread(&tmp, sizeof(char), 1, file);
+            fread(&tmp1, sizeof(char), 1, file);
+            fread(&tmp2, sizeof(char), 1, file);
+            fread(&tmp3, sizeof(char), 1, file);
+            b = bytes_to_dec(tmp3, tmp2, tmp1, tmp);
+            printf("%d\n", (a + b));
+            //}
         }
         if ((octet & 0x000000ff) == 02) {
             printf("its sub\n");
             for(int i = 0; i < 8; i++) {
-                fread(&octet, sizeof(char), 1, file);
-                printf("0x%02X \n", octet & 0x000000ff);
+                fread(&tmp, sizeof(char), 1, file);
+                fread(&tmp1, sizeof(char), 1, file);
+                fread(&tmp2, sizeof(char), 1, file);
+                fread(&tmp3, sizeof(char), 1, file);
+                a = bytes_to_dec(tmp3, tmp2, tmp1, tmp);
+                fread(&tmp, sizeof(char), 1, file);
+                fread(&tmp1, sizeof(char), 1, file);
+                fread(&tmp2, sizeof(char), 1, file);
+                fread(&tmp3, sizeof(char), 1, file);
+                b = bytes_to_dec(tmp3, tmp2, tmp1, tmp);
+                printf("%d\n", (a - b));
             }
         }
         if ((octet & 0x000000ff) == 03) {
