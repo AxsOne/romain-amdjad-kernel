@@ -180,18 +180,24 @@ int main(int ac, char **av)
         //printf("0x%02X \n", octet & 0x000000ff);
         if ((octet & 0x000000ff) == 01) {
             printf("its add\n");
-            for (int i = 0; i <= 4; i++)
+            for (int i = 0; i < 8; i++) {
                 fread(&octet, sizeof(char), 1, file);
+                printf("0x%02X \n", octet & 0x000000ff);
+            }
         }
         if ((octet & 0x000000ff) == 02) {
             printf("its sub\n");
-            for(int i = 0; i <= 4; i++)
+            for(int i = 0; i < 8; i++) {
                 fread(&octet, sizeof(char), 1, file);
+                printf("0x%02X \n", octet & 0x000000ff);
+            }
         }
         if ((octet & 0x000000ff) == 03) {
             printf("its mul\n");
-            for (int i = 0; i <= 4; i++)
+            for (int i = 0; i < 8; i++) {
                 fread(&octet, sizeof(char), 1, file);
+                printf("0x%02X \n", octet & 0x000000ff);
+            }
         }
         if ((octet & 0x000000ff) == 04) {
             printf("its put\n");
