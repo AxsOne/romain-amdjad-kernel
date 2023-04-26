@@ -10,7 +10,7 @@
 #include <fcntl.h>
 #include "my.h"
 
-int read_byte(void) {
+int length_byte(void) {
     FILE *file = fopen("one-structure.yolo", "r");
     if (file != NULL) {
         fseek(file, 0L, SEEK_END);
@@ -97,36 +97,45 @@ int mul(int a, int b)
 char *get_file(char *str)
 {   
     calc_t *calc = malloc(sizeof(calc_t));
+    put_t *put = malloc(sizeof(put_t));
     FILE *file = fopen(str, "r");
-    FILE *file2 = fopen("recup", "wb");
+    FILE *file2 = fopen("exemple.bytecode", "wb");
     size_t len = 0;
+    int len_word = 0;
     char **line = NULL;
-    //int a = atoi(line[1]);
-    //int b = atoi(line[2]);
     for (int i = 0; getline(&str, &len, file) != -1; i++) {
         line = mstwa(str, " ");
         if (strcmp(line[0], "add") == 0) {
             calc->command = 1;
             calc->args_1 = atoi(line[1]);
             calc->args_2 = atoi(line[2]);
-            fwrite(calc, 1, (sizeof(calc->command) + sizeof(calc->args_1) + sizeof(calc->args_2)), file2);
+            fwrite(&calc->command, sizeof(calc->command), 1, file2);
+            fwrite(&calc->args_1, sizeof(calc->args_1), 1, file2);
+            fwrite(&calc->args_2, sizeof(calc->args_2), 1, file2);
         }
         if (strcmp(line[0], "sub") == 0) {
             calc->command = 2;
             calc->args_1 = atoi(line[1]);
             calc->args_2 = atoi(line[2]);
-            fwrite(calc, 1, (sizeof(calc->args_1) + sizeof(calc->args_2) + sizeof(calc->command)), file2);
+            fwrite(&calc->command, sizeof(calc->command), 1, file2);
+            fwrite(&calc->args_1, sizeof(calc->args_1), 1, file2);
+            fwrite(&calc->args_2, sizeof(calc->args_2), 1, file2);
         }
         if (strcmp(line[0], "mul") == 0) {
             calc->command = 3;
             calc->args_1 = atoi(line[1]);
             calc->args_2 = atoi(line[2]);
-            fwrite(calc, 1, (sizeof(calc->args_1) + sizeof(calc->args_2) + sizeof(calc->command)), file2);
+            fwrite(&calc->command, sizeof(calc->command), 1, file2);
+            fwrite(&calc->args_1, sizeof(calc->args_1), 1, file2);
+            fwrite(&calc->args_2, sizeof(calc->args_2), 1, file2);
         }
         if (strcmp(line[0], "put") == 0) {
-            calc->command = 4;
-            strcpy(calc->str_2, line[1]);
-            fwrite(calc, 1, (sizeof(calc->command) + sizeof(calc->str_2)), file2);
+                put->command = 4;
+                strcpy(put->str, line[1]);
+                len_word = strlen(put->str);
+                fwrite(&put->command, sizeof(put->command), 1, file2);
+                fwrite(&len_word, sizeof(int), 1, file2);
+                fwrite(&put->str, len_word, 1, file2);
         }
     }
     return str;
@@ -150,8 +159,6 @@ int main(int ac, char **av)
     //step3();
     //step4();
     //step5();
-    read_byte();
     get_file(av[1]);
-    //create_file(av[1], av[2]);
     return 0;
 }

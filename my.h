@@ -14,11 +14,16 @@ typedef struct save_byte_s {
 } save_byte_t;
 
 typedef struct calc_s {
-    int command;
+    char command;
     int args_1;
     int args_2;
-    char *str_2;
 } calc_t;
 
-char **mstwa(char *str, char const *sep);
+typedef struct put_s {
+    char command;
+    char str[40];
+} put_t;
+
+char **
+mstwa(char *str, char const *sep);
 int my_strlen(char const *str);
