@@ -146,19 +146,32 @@ void create_file(char *str, char *str_2)
     str = get_file(str_2);
     FILE *file = fopen(str, "wr");
     fclose(file);
-    
 }
+
+/*Interpreter*/
+//int main(int ac, char **av)
+//{
+//    ac = ac;
+//    if (open(av[1], O_RDONLY) == -1)
+//        return 84;
+//    get_file(av[1]);
+//    return 0;
+//}
 
 int main(int ac, char **av)
 {
-    ac = ac;
-    if (open(av[1], O_RDONLY) == -1)
-        return 84;
-    //step1();
-    //step2();
-    //step3();
-    //step4();
-    //step5();
-    get_file(av[1]);
+    if (ac != 2) 
+        return (84);
+    FILE *file = fopen(av[1], "wr");
+    unsigned char octet;
+    if (file == NULL) {
+        perror("Erreur lors de l'ouverture du file");
+        exit(EXIT_FAILURE);
+    }
+    printf("lol\n");
+    while (fread(&octet, sizeof(unsigned char), 1, file) == 1) {
+        printf("%02x ", octet);
+    }
+    fclose(file);
     return 0;
 }
