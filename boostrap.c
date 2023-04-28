@@ -175,7 +175,7 @@ int bytes_to_dec(char byte1, char byte2, char byte3, char byte4)
     int dec3 = (unsigned char)byte3;
     int dec4 = (unsigned char)byte4;
     //inversion du small endian pour retourner l'int
-    return (dec1 << 24) | (dec2 << 16) | (dec3 << 8) | dec4;
+     return dec1 | (dec2 << 8) | (dec3 << 16) | (dec4 << 24);
 }
 
 int main(int ac, char **av)
@@ -183,10 +183,8 @@ int main(int ac, char **av)
     if (ac != 2) return (84);
     FILE *file = fopen(av[1], "rb");
     char octet;
-    char tmp;
-    char tmp1;
-    char tmp2;
-    char tmp3;
+    char tmp[5];
+    tmp[4] = '\0';
     int a;
     int b;
     if (file == NULL)
@@ -198,57 +196,37 @@ int main(int ac, char **av)
         //printf("0x%02X \n", octet & 0x000000ff);
         if ((octet & 0x000000ff) == 01) {
             printf("its add\n");
-            fread(&tmp, sizeof(char), 1, file);
-            fread(&tmp1, sizeof(char), 1, file);
-            fread(&tmp2, sizeof(char), 1, file);
-            fread(&tmp3, sizeof(char), 1, file);
-            a = bytes_to_dec(tmp3, tmp2, tmp1, tmp);
-            fread(&tmp, sizeof(char), 1, file);
-            fread(&tmp1, sizeof(char), 1, file);
-            fread(&tmp2, sizeof(char), 1, file);
-            fread(&tmp3, sizeof(char), 1, file);
-            b = bytes_to_dec(tmp3, tmp2, tmp1, tmp);
+            fread(&tmp, 4, 1, file);
+            a = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
+            fread(&tmp, 4, 1, file);
+            b = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
             printf("%d\n", (a + b));
         }
         if ((octet & 0x000000ff) == 02) {
             printf("its sub\n");
-            fread(&tmp, sizeof(char), 1, file);
-            fread(&tmp1, sizeof(char), 1, file);
-            fread(&tmp2, sizeof(char), 1, file);
-            fread(&tmp3, sizeof(char), 1, file);
-            a = bytes_to_dec(tmp3, tmp2, tmp1, tmp);
-            fread(&tmp, sizeof(char), 1, file);
-            fread(&tmp1, sizeof(char), 1, file);
-            fread(&tmp2, sizeof(char), 1, file);
-            fread(&tmp3, sizeof(char), 1, file);
-            b = bytes_to_dec(tmp3, tmp2, tmp1, tmp);
+            fread(&tmp, 4, 1, file);
+            a = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
+            fread(&tmp, 4, 1, file);
+            b = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
             printf("%d\n", (a - b));
         }
         if ((octet & 0x000000ff) == 03) {
             printf("its mul\n");
-            fread(&tmp, sizeof(char), 1, file);
-            fread(&tmp1, sizeof(char), 1, file);
-            fread(&tmp2, sizeof(char), 1, file);
-            fread(&tmp3, sizeof(char), 1, file);
-            a = bytes_to_dec(tmp3, tmp2, tmp1, tmp);
-            fread(&tmp, sizeof(char), 1, file);
-            fread(&tmp1, sizeof(char), 1, file);
-            fread(&tmp2, sizeof(char), 1, file);
-            fread(&tmp3, sizeof(char), 1, file);
-            b = bytes_to_dec(tmp3, tmp2, tmp1, tmp);
+            fread(&tmp, 4, 1, file);
+            a = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
+            fread(&tmp, 4, 1, file);
+            b = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
             printf("%d\n", (a * b));
         }
         if ((octet & 0x000000ff) == 04) {
             printf("its put\n");
-            fread(&tmp, sizeof(char), 1, file);
-            fread(&tmp1, sizeof(char), 1, file);
-            fread(&tmp2, sizeof(char), 1, file);
-            fread(&tmp3, sizeof(char), 1, file);
-            a = bytes_to_dec(tmp3, tmp2, tmp1, tmp);
+            fread(&tmp, 4, 1, file);
+            a = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
             char str[a];
+            (void)str[a];
             for (int i = 0; i < a; i++) {
                 fread(&tmp, sizeof(char), 1, file);
-                str[i] = tmp;
+                str[i] = tmp[0];
             }
             str[a] = '\0';
             printf("%s\n", str);
