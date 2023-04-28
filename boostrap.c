@@ -12,19 +12,6 @@
 #include <stdbool.h>
 #include "my.h"
 
-int length_byte(void)
-{
-    FILE *file = fopen("one-structure.yolo", "r");
-    if (file != NULL)
-    {
-        fseek(file, 0L, SEEK_END);
-        long size = ftell(file);
-        printf("Taille du fichier : %ld bytes\n", size);
-        fclose(file);
-    }
-    return 0;
-}
-
 int step1(void)
 {
     FILE *fp;
@@ -81,21 +68,6 @@ void step5(void)
     fp = fopen("one-structure.yolo", "wa");
     fwrite(byte, 1, (sizeof(byte->byte) + sizeof(byte->c) + sizeof(byte->str)), fp);
     fclose(fp);
-}
-
-int adds(int a, int b) 
-{
-    return a + b;
-}
-
-int substracts(int a, int b)
-{
-    return a - b;
-}
-
-int mul(int a, int b)
-{
-    return a * b;
 }
 
 char *get_file(char *str)
@@ -180,56 +152,35 @@ int bytes_to_dec(char byte1, char byte2, char byte3, char byte4)
 
 int main(int ac, char **av)
 {
-    if (ac != 2) return (84);
+    add_t *add = init_add();
+    sub_t *sub = init_sub();
+    mul_t *mul = init_mul();
+    put_t *put = init_put();
+    if (ac != 2)
+        return (84);
     FILE *file = fopen(av[1], "rb");
-    char octet;
-    char tmp[5];
-    tmp[4] = '\0';
-    int a;
-    int b;
-    if (file == NULL)
-    {
+    char tmp[4];
+    if (file == NULL) {
         perror("Erreur lors de l'ouverture du file");
         exit(EXIT_FAILURE);
     }
-    while (fread(&octet, sizeof(char), 1, file)) {
+    while (fread(&tmp, sizeof(char), 1, file)) {
         //printf("0x%02X \n", octet & 0x000000ff);
-        if ((octet & 0x000000ff) == 01) {
-            printf("its add\n");
-            fread(&tmp, 4, 1, file);
-            a = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
-            fread(&tmp, 4, 1, file);
-            b = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
-            printf("%d\n", (a + b));
+        if ((tmp[0] & 0x000000ff) == 01) {
+            my_add_fill_struct(file, add);
+            printf("%d\n", (add->args_1 + add->args_2));
         }
-        if ((octet & 0x000000ff) == 02) {
-            printf("its sub\n");
-            fread(&tmp, 4, 1, file);
-            a = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
-            fread(&tmp, 4, 1, file);
-            b = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
-            printf("%d\n", (a - b));
+        if ((tmp[0] & 0x000000ff) == 02) {
+            my_sub_fill_struct(file, sub);
+            printf("%d\n", (sub->args_1 - sub->args_2));
         }
-        if ((octet & 0x000000ff) == 03) {
-            printf("its mul\n");
-            fread(&tmp, 4, 1, file);
-            a = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
-            fread(&tmp, 4, 1, file);
-            b = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
-            printf("%d\n", (a * b));
+        if ((tmp[0] & 0x000000ff) == 03) {
+            my_mul_fill_struct(file, mul);
+            printf("%d\n", (mul->args_1 * mul->args_2));
         }
-        if ((octet & 0x000000ff) == 04) {
-            printf("its put\n");
-            fread(&tmp, 4, 1, file);
-            a = bytes_to_dec(tmp[0], tmp[1], tmp[2], tmp[3]);
-            char str[a];
-            (void)str[a];
-            for (int i = 0; i < a; i++) {
-                fread(&tmp, sizeof(char), 1, file);
-                str[i] = tmp[0];
-            }
-            str[a] = '\0';
-            printf("%s\n", str);
+        if ((tmp[0] & 0x000000ff) == 04) {
+            my_put_fill_struct(file, put);
+            printf("%s\n", put->str);
         }
     }
     fclose(file);
